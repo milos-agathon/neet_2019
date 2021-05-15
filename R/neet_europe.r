@@ -3,7 +3,7 @@
 #load libraries
 library(ggplot2, quietly=T) 
 library(rgdal, quietly=T)
-library(rgeos, quietly=T)
+library(rgeos, quietly=T) 
 library(dplyr, quietly=T)
 library(classInt, quietly=T)
 library(eurostat, quietly=T)
@@ -55,7 +55,7 @@ edat_lfse_38 <- eurostat::get_eurostat("edat_lfse_38",
 neet <- edat_lfse_38  %>%
   			filter(time==2019, # only the year of 2018 
                 citizen=="TOTAL", # both citizens and residents
-				age=="Y15-34", # ages 15-34
+				age=="Y25-34", # ages 15-34
 				sex=="T") %>% # all genders
     		dplyr::select (geo, time, values)
 names(neet)[1] <- "NUTS_ID"
@@ -68,7 +68,7 @@ d <- e %>% left_join(f1, by = "NUTS_ID")
 
 # let's find a natural interval with quantile breaks
 ni = classIntervals(d$values, 
-	            n = 7, 
+	            n = 6, 
 	            style = 'quantile')$brks
 # this function uses above intervals to create categories
 labels <- c()
@@ -85,7 +85,7 @@ d$cat <- cut(d$values,
               breaks = ni, 
               labels = labels, 
               include.lowest = T)
-levels(d$cat) # let's check how many levels it has (7)
+levels(d$cat) # let's check how many levels it has (6)
 
 # label NAs, too
 lvl <- levels(d$cat)
@@ -119,13 +119,12 @@ geom_polygon(data = c, aes(x = long,
 coord_map(xlim=c(-10.6600,44.07), ylim=c(32.5000,71.0500), projection="lambert", parameters=c(10.44,52.775)) +
 expand_limits(x=c$long,y=c$lat)+
 labs(x = "",
-     title="Young people aged 15-34 not in\neducation, employment or training in 2019",
+     title="Young people aged 25-34 not in\neducation, employment or training in 2019",
      subtitle = "NUTS-2 level",
      caption="©2021 Milos Popovic https://milospopovic.net\nSource: Eurostat\nhttps://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=edat_lfse_38&lang=en")+
-scale_fill_manual(name= "% of active population",
-  values=c('#fff1c5', '#c3d7ba', '#91bbaf', '#689ca3', '#457e97', '#275f8b', '#00407e', "grey80"),
-  labels=c("5–7",  "7–8",  "8–9",  "9–12",    
-  	"12–14",   "14–18",   ">18", "No data"),
+scale_fill_manual(name= "% of population aged 25-34",
+  values=c('#fff1c5', '#c3d7ba', '#91bbaf', '#689ca3', '#457e97', '#00407e', "grey80"),
+  labels=c("5–9",   "9–10",  "10–13", "13–16",  "16–22",  ">22", "No data"),
   drop=F)+
 guides(fill=guide_legend(
             direction = "horizontal",
