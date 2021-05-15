@@ -2,13 +2,11 @@
 
 #load libraries
 library(ggplot2, quietly=T) 
-library(plyr, quietly=T) 
 library(rgdal, quietly=T)
 library(rgeos, quietly=T)
-library(grid, quietly=T) 
 library(dplyr, quietly=T)
 library(classInt, quietly=T)
-library(raster, quietly=T)
+library(eurostat, quietly=T)
 
 set.seed(20210515)
 
