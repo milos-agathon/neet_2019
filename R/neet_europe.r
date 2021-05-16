@@ -1,4 +1,6 @@
 # SIMPLE CHOROPLETH MAP OF EUROPE
+# Milos Popovic
+# 2021/5/16
 
 #load libraries
 library(ggplot2, quietly=T) 
@@ -48,16 +50,15 @@ c <- fortify(cn)
 ###########
 # DATASET #
 ###########    
-# get NUTS2-level data on young people aged 15-34 NEET
-edat_lfse_38 <- eurostat::get_eurostat("edat_lfse_38",
+# get NUTS2-level data on young people aged 15-29 NEET
+edat_lfse_22 <- eurostat::get_eurostat("edat_lfse_22",
                                     time_format = "num")
 # let's subset the dataset
-neet <- edat_lfse_38  %>%
-  			filter(time==2019, # only the year of 2018 
-                citizen=="TOTAL", # both citizens and residents
-				age=="Y25-34", # ages 15-34
-				sex=="T") %>% # all genders
-    		dplyr::select (geo, time, values)
+neet <- edat_lfse_22  %>%
+  			filter(time==2019, # only the year of 2019 
+				       age=="Y15-29", # ages 15-29
+				       sex=="T") %>% # all genders
+    		dplyr::select (geo, values)
 names(neet)[1] <- "NUTS_ID"
 
 # merge shp and data.frame
@@ -119,12 +120,12 @@ geom_polygon(data = c, aes(x = long,
 coord_map(xlim=c(-10.6600,44.07), ylim=c(32.5000,71.0500), projection="lambert", parameters=c(10.44,52.775)) +
 expand_limits(x=c$long,y=c$lat)+
 labs(x = "",
-     title="Young people aged 25-34 not in\neducation, employment or training in 2019",
+     title="Young people aged 15-29 not in\neducation, employment or training in 2019",
      subtitle = "NUTS-2 level",
      caption="©2021 Milos Popovic https://milospopovic.net\nSource: Eurostat\nhttps://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=edat_lfse_38&lang=en")+
-scale_fill_manual(name= "% of population aged 25-34",
-  values=c('#fff1c5', '#c3d7ba', '#91bbaf', '#689ca3', '#457e97', '#00407e', "grey80"),
-  labels=c("5–9",   "9–10",  "10–13", "13–16",  "16–22",  ">22", "No data"),
+scale_fill_manual(name= "% of population aged 15-29",
+  values=c('#ffd080', '#f4a77a', '#e18079', '#c35e7d', '#9b4283', '#6c2d83', "grey80"),
+  labels=c("4–6",     "6–7",     "7–10",    "10–12",   "12–15",   ">15",   "No data"),
   drop=F)+
 guides(fill=guide_legend(
             direction = "horizontal",
@@ -146,8 +147,8 @@ legend.position = c(.45, .04),
 panel.border = element_blank(),
 panel.grid.minor = element_blank(),
 panel.grid.major = element_line(color = "white", size = 0.2),
-plot.title = element_text(size=20, color="#004b8b", hjust=0.5, vjust=-10),
-plot.subtitle = element_text(size=14, color="#4cc2b6", hjust=0.5, vjust=-15, face="bold"),
+plot.title = element_text(size=20, color="#6c2d83", hjust=0.5, vjust=-10),
+plot.subtitle = element_text(size=14, color="#bd5288", hjust=0.5, vjust=-15, face="bold"),
 plot.caption = element_text(size=9, color="grey60", hjust=0.5, vjust=9),
 axis.title.x = element_text(size=7, color="grey60", hjust=0.5, vjust=5),
 legend.text = element_text(size=10, color="grey20"),
